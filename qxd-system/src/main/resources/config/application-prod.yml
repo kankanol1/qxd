@@ -111,12 +111,15 @@ file:
   mac:
     path: ~/file/
     avatar: ~/avatar/
+    cover: ~/cover/
   linux:
     path: /home/eladmin/file/
     avatar: /home/eladmin/avatar/
+    cover: /home/eladmin/cover/
   windows:
     path: C:\eladmin\file\
     avatar: C:\eladmin\avatar\
+    cover: C:\eladmin\cover\
   # 文件大小 /M
   maxSize: 100
   avatarMaxSize: 5

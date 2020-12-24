@@ -194,7 +194,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(SecurityUtils.getCurrentUsername());
         String oldPath = user.getAvatarPath();
         File file = FileUtil.upload(multipartFile, properties.getPath().getAvatar());
-        user.setAvatarPath(Objects.requireNonNull(file).getPath());
+//        user.setAvatarPath(Objects.requireNonNull(file).getPath());
+        user.setAvatarPath("/avatar/"+file.getName());
         user.setAvatarName(file.getName());
         userRepository.save(user);
         if (StringUtils.isNotBlank(oldPath)) {

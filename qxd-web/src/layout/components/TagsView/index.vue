@@ -1,27 +1,57 @@
 <template>
-  <div id="tags-view-container" class="tags-view-container">
-    <scroll-pane ref="scrollPane" class="tags-view-wrapper">
-      <router-link
-        v-for="tag in visitedViews"
-        ref="tag"
-        :key="tag.path"
-        :class="isActive(tag)?'active':''"
-        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
-        class="tags-view-item"
-        @click.middle.native="closeSelectedTag(tag)"
-        @contextmenu.prevent.native="openMenu(tag,$event)"
-      >
-        {{ tag.title }}
-        <span v-if="!tag.meta.affix" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
-      </router-link>
-    </scroll-pane>
-    <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+  <div id="tags-view-container" class="tags-view-container tags-nav">
+    <div class="scroll-outer" ref="scrollOuter" @DOMMouseScroll="handlescroll" @mousewheel="handlescroll">
+      <div ref="scrollBody" class="scroll-body">
+        <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll" :style="{left: tagBodyLeft + 'px'}">
+          <router-link v-for="tag in visitedViews" ref="tag" :key="tag.path" :class="isActive(tag)?'active':''" :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }" tag="span" class="tags-view-item" @click.middle.native="closeSelectedTag(tag)" @contextmenu.prevent.native="openMenu(tag,$event)">
+            {{ tag.title }}
+            <span v-if="!tag.meta.affix" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+          </router-link>
+        </scroll-pane>
+      </div>
+    </div>
+   <!-- <div class="close-con">
+      <el-dropdown transfer style="margin-top:7px;">
+        <el-button size="small" type="text">
+          <i :size="18"  class="el-icon-circle-close" />
+        </el-button>
+        <el-dropdown-menu slot="list">
+          <el-dropdown-item>
+            <span @click="refreshSelectedTag(selectedTag)">刷新页面</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <span v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">关闭当前</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <span @click="closeOthersTags(selectedTag)">关闭其他</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <span @click="closeAllTags(selectedTag)">关闭所有</span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>-->
+    <ul v-show="visible" :style="{left:left+'px',top:top+'px',border:'1px solid #eee'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新</li>
       <li v-if="!(selectedTag.meta&&selectedTag.meta.affix)" @click="closeSelectedTag(selectedTag)">关闭</li>
       <li @click="closeOthersTags">关闭其他</li>
       <li @click="closeAllTags(selectedTag)">关闭全部</li>
     </ul>
+    <div class="btn-con left-btn">
+      <span type="text" @click="handleScrolls(240)">
+        <i :size="18"  class="el-icon-arrow-left" />
+      </span>
+    </div>
+    <div class="btn-con right-btn" style="right: 0" title="关闭所有">
+      <span type="text" @click="closeAllTags(selectedTag)">
+        <i :size="18"  class="el-icon-circle-close" />
+      </span>
+    </div>
+    <div class="btn-con right-btn">
+      <span type="text" @click="handleScrolls(-240)">
+        <i :size="18" class="el-icon-arrow-right" />
+      </span>
+    </div>
   </div>
 </template>
 
@@ -37,7 +67,8 @@ export default {
       top: 0,
       left: 0,
       selectedTag: {},
-      affixTags: []
+      affixTags: [],
+      tagBodyLeft: 0
     }
   },
   computed: {
@@ -66,6 +97,34 @@ export default {
     this.addTags()
   },
   methods: {
+    handleScrolls(offset) {
+      const outerWidth = this.$refs.scrollOuter.offsetWidth
+      const bodyWidth = this.$refs.scrollBody.offsetWidth
+      if (offset > 0) {
+        this.tagBodyLeft = Math.min(0, this.tagBodyLeft + offset)
+      } else {
+        if (outerWidth < bodyWidth) {
+          if (this.tagBodyLeft < -(bodyWidth - outerWidth)) {
+            this.tagBodyLeft = this.tagBodyLeft
+          } else {
+            this.tagBodyLeft = Math.max(this.tagBodyLeft + offset, outerWidth - bodyWidth)
+          }
+        } else {
+          this.tagBodyLeft = 0
+        }
+      }
+    },
+    handlescroll(e) {
+      var type = e.type
+      let delta = 0
+      if (type === 'DOMMouseScroll' || type === 'mousewheel') {
+        delta = (e.wheelDelta) ? e.wheelDelta : -(e.detail || 0) * 40
+      }
+      this.handleScroll(delta)
+    },
+    handleScroll() {
+      this.closeMenu()
+    },
     isActive(route) {
       return route.path === this.$route.path
     },
@@ -180,7 +239,7 @@ export default {
         this.left = left
       }
 
-      this.top = e.clientY
+      this.top = e.clientY - 30
       this.visible = true
       this.selectedTag = tag
     },
@@ -190,7 +249,9 @@ export default {
   }
 }
 </script>
-
+<style lang="scss">
+  @import '../tags-nav/tags-nav.scss';
+</style>
 <style lang="scss" scoped>
 .tags-view-container {
   height: 34px;

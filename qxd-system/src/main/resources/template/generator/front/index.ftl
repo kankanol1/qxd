@@ -1,72 +1,102 @@
 <#--noinspection ALL-->
 <template>
-  <div class="app-container">
+  <div class="app-container ${changeClassName}">
     <!--工具栏-->
     <div class="head-container">
     <#if hasQuery>
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
-        <#if queryColumns??>
-          <#list queryColumns as column>
-            <#if column.queryType != 'BetWeen'>
-        <label class="el-form-item-label"><#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if></label>
-        <el-input v-model="query.${column.changeColumnName}" clearable placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-            </#if>
-          </#list>
-        </#if>
-  <#if betweens??>
+        <div style="width: 100%;">
+          <#if queryColumns??>
+            <#list queryColumns as column>
+              <#if column.queryType != 'BetWeen'>
+                <div class="search-item">
+                  <label class="el-form-item-label"><#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if></label>
+                    <#if column.formType = 'Input'>
+                      <el-input v-model="query.${column.changeColumnName}" clearable placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" style="width: 230px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+                    <#elseif column.formType = 'Select'>
+                      <#if (column.dictName)?? && (column.dictName)!="">
+                        <el-select clearable style="width: 230px;" v-model="query.${column.changeColumnName}" filterable placeholder="请选择" @change="crud.toQuery">
+                          <el-option
+                            v-for="item in dict.${column.dictName}"
+                            :key="item.id"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      <#else>
+                        未设置字典，请手动设置 Select
+                      </#if>
+                    <#else>
+                      <el-input v-model="query.${column.changeColumnName}" clearable placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" style="width: 230px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+                    </#if>
+                </div>
+              </#if>
+            </#list>
+          </#if>
+    <#if betweens??>
     <#list betweens as column>
       <#if column.queryType = 'BetWeen'>
-        <date-range-picker
-          v-model="query.${column.changeColumnName}"
-          start-placeholder="${column.changeColumnName}Start"
-          end-placeholder="${column.changeColumnName}Start"
-          class="date-item"
-        />
+          <div class="search-item">
+            <label class="el-form-item-label"><#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if></label>
+            <date-range-picker
+              v-model="query.${column.changeColumnName}"
+              start-placeholder="${column.changeColumnName}Start"
+              end-placeholder="${column.changeColumnName}Start"
+              class="date-item"
+            />
+          </div>
       </#if>
     </#list>
   </#if>
-        <rrOperation :crud="crud" />
+          <div class="search-item">
+            <rrOperation :crud="crud" />
+          </div>
+        </div>
       </div>
     </#if>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
       <crudOperation :permission="permission" />
       <!--表单组件-->
-      <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="500px">
-        <el-form ref="form" :model="form" <#if isNotNullColumns??>:rules="rules"</#if> size="small" label-width="80px">
-    <#if columns??>
-      <#list columns as column>
-        <#if column.formShow>
-          <el-form-item label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>"<#if column.istNotNull> prop="${column.changeColumnName}"</#if>>
-            <#if column.formType = 'Input'>
-            <el-input v-model="form.${column.changeColumnName}" style="width: 370px;" />
-            <#elseif column.formType = 'Textarea'>
-            <el-input v-model="form.${column.changeColumnName}" :rows="3" type="textarea" style="width: 370px;" />
-            <#elseif column.formType = 'Radio'>
-              <#if (column.dictName)?? && (column.dictName)!="">
-            <el-radio v-model="form.${column.changeColumnName}" v-for="item in dict.${column.dictName}" :key="item.id" :label="item.value">{{ item.label }}</el-radio>
-              <#else>
-                未设置字典，请手动设置 Radio
+      <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="800px">
+        <el-form ref="form" :model="form" <#if isNotNullColumns??>:rules="rules"</#if> size="small" label-width="120px">
+          <el-row>
+              <#if columns??>
+              <#list columns as column>
+              <#if column.formShow>
+              <el-col :span="12">
+                <el-form-item label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>"<#if column.istNotNull> prop="${column.changeColumnName}"</#if>>
+                    <#if column.formType = 'Input'>
+                      <el-input v-model="form.${column.changeColumnName}" style="width: 250px;" />
+                    <#elseif column.formType = 'Textarea'>
+                      <el-input v-model="form.${column.changeColumnName}" :rows="1" type="textarea" style="width: 250px;" />
+                    <#elseif column.formType = 'Radio'>
+                        <#if (column.dictName)?? && (column.dictName)!="">
+                          <el-radio v-model="form.${column.changeColumnName}" v-for="item in dict.${column.dictName}" :key="item.id" :label="item.value">{{ item.label }}</el-radio>
+                        <#else>
+                          未设置字典，请手动设置 Radio
+                        </#if>
+                    <#elseif column.formType = 'Select'>
+                        <#if (column.dictName)?? && (column.dictName)!="">
+                          <el-select style="width: 250px;" v-model="form.${column.changeColumnName}" filterable placeholder="请选择">
+                            <el-option
+                                    v-for="item in dict.${column.dictName}"
+                                    :key="item.id"
+                                    :label="item.label"
+                                    :value="item.value" />
+                          </el-select>
+                        <#else>
+                          未设置字典，请手动设置 Select
+                        </#if>
+                    <#else>
+                      <el-date-picker v-model="form.${column.changeColumnName}" type="datetime" style="width: 250px;" />
+                    </#if>
+                </el-form-item>
+              </el-col>
               </#if>
-            <#elseif column.formType = 'Select'>
-              <#if (column.dictName)?? && (column.dictName)!="">
-            <el-select v-model="form.${column.changeColumnName}" filterable placeholder="请选择">
-              <el-option
-                v-for="item in dict.${column.dictName}"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-              <#else>
-            未设置字典，请手动设置 Select
+              </#list>
               </#if>
-            <#else>
-            <el-date-picker v-model="form.${column.changeColumnName}" type="datetime" style="width: 370px;" />
-            </#if>
-          </el-form-item>
-        </#if>
-      </#list>
-    </#if>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -86,9 +116,9 @@
           </template>
         </el-table-column>
           <#elseif column.columnType != 'Timestamp'>
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" />
+        <el-table-column :show-overflow-tooltip="true" prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" />
                 <#else>
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>">
+        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" width="180px">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.${column.changeColumnName}) }}</span>
           </template>
@@ -113,17 +143,18 @@
 </template>
 
 <script>
-import crud${className} from '@/api/${changeClassName}'
+import crud${className} from '@/api/qxd/${changeClassName}'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import DateRangePicker from '@/components/DateRangePicker'
 
 const defaultForm = { <#if columns??><#list columns as column>${column.changeColumnName}: null<#if column_has_next>, </#if></#list></#if> }
 export default {
   name: '${className}',
-  components: { pagination, crudOperation, rrOperation, udOperation },
+  components: {DateRangePicker, pagination, crudOperation, rrOperation, udOperation },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   <#if hasDict>
   dicts: [<#if hasDict??><#list dicts as dict>'${dict}'<#if dict_has_next>, </#if></#list></#if>],
@@ -170,6 +201,13 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.search-item{
+  box-sizing: border-box;
+  display: inline-block;
+  width: 24.5%;
+  .el-form-item-label{
+    margin-top: 8px !important;
+  }
+}
 </style>

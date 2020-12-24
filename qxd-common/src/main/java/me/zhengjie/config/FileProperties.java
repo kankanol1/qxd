@@ -54,7 +54,7 @@ public class FileProperties {
     public static class ElPath{
 
         private String path;
-
         private String avatar;
+        private String cover;
     }
 }

@@ -14,6 +14,8 @@ import dict from './components/Dict'
 
 // 权限指令
 import permission from './components/Permission'
+
+import vfocus from './directive/test/vfocus'
 import './assets/styles/element-variables.scss'
 // global css
 import './assets/styles/index.scss'
@@ -33,6 +35,7 @@ import 'echarts-gl'
 Vue.use(VueHighlightJS)
 Vue.use(mavonEditor)
 Vue.use(permission)
+Vue.use(vfocus)
 Vue.use(dict)
 Vue.use(Element, {
   size: Cookies.get('size') || 'small' // set element-ui default size
@@ -44,5 +47,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  // delimiters: ['${', '}'],
   render: h => h(App)
 })

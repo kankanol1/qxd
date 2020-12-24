@@ -105,6 +105,8 @@ public class UserController {
     public ResponseEntity<Object> create(@Validated @RequestBody User resources){
         checkLevel(resources);
         // 默认密码 123456
+        resources.setAvatarPath("/avatar/avatar-2020121701470290.png");
+        resources.setAvatarName("avatar-2020121701470290.png");
         resources.setPassword(passwordEncoder.encode("123456"));
         userService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);

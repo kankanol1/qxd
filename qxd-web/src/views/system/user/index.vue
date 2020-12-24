@@ -143,6 +143,20 @@
         <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
           <el-table-column :selectable="checkboxT" type="selection" width="55" />
           <el-table-column :show-overflow-tooltip="true" prop="username" label="用户名" />
+          <el-table-column  prop="avatarPath" label="头像" >
+            <template slot-scope="scope">
+              <el-popover
+                title="头像"
+                trigger="hover"
+                placement="left-start"
+              >
+                <div class="border:1px solid #eee;text-align:center">
+                  <img :src="baseApi + scope.row.avatarPath"  height="150px" alt="qxd...">
+                </div>
+                <img slot="reference" :src="baseApi + scope.row.avatarPath" width="40px" height="40px" alt="qxd...">
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="nickName" label="昵称" />
           <el-table-column prop="gender" label="性别" />
           <el-table-column :show-overflow-tooltip="true" prop="phone" width="100" label="电话" />
@@ -265,7 +279,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user'
+      'user',
+      'updateAvatarApi',
+      'baseApi'
     ])
   },
   created() {
