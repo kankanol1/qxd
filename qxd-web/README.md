@@ -30,5 +30,14 @@ npm run build:prod
 
 2、加速node-sass安装
 
+3、
+```
+ "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+```
 https://www.ydyno.com/archives/1219.html
 

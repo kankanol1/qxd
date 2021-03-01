@@ -6,11 +6,11 @@
         <!-- 搜索 -->
         <div style="width: 100%;">
           <div class="search-item">
-            <label class="el-form-item-label">课程名称</label>
+<!--            <label class="el-form-item-label">课程名称</label>-->
             <el-input v-model="query.courseName" clearable placeholder="课程名称" style="width: 230px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
           </div>
           <div class="search-item">
-            <label class="el-form-item-label">开课形式</label>
+<!--            <label class="el-form-item-label">开课形式</label>-->
             <el-select clearable style="width: 230px;" v-model="query.courseForm" filterable placeholder="请选择" @change="crud.toQuery">
               <el-option
                 v-for="item in dict.course_form"
@@ -21,7 +21,7 @@
             </el-select>
           </div>
           <div class="search-item">
-            <label class="el-form-item-label">付费方式</label>
+<!--            <label class="el-form-item-label">付费方式</label>-->
             <el-select clearable style="width: 230px;" v-model="query.payWay" filterable placeholder="请选择" @change="crud.toQuery">
               <el-option
                 v-for="item in dict.pay_way"
@@ -32,7 +32,7 @@
             </el-select>
           </div>
           <div class="search-item">
-            <label class="el-form-item-label">课程状态</label>
+<!--            <label class="el-form-item-label">课程状态</label>-->
             <el-select clearable style="width: 230px;" v-model="query.enabled" filterable placeholder="请选择" @change="crud.toQuery">
               <el-option
                 v-for="item in dict.course_status"
@@ -43,7 +43,7 @@
             </el-select>
           </div>
           <div class="search-item">
-            <label class="el-form-item-label">审核状态</label>
+<!--            <label class="el-form-item-label">审核状态</label>-->
             <el-select clearable style="width: 230px;" v-model="query.checkStatus" filterable placeholder="请选择" @change="crud.toQuery">
               <el-option
                 v-for="item in dict.check_status"
@@ -54,7 +54,7 @@
             </el-select>
           </div>
           <div class="search-item">
-            <label class="el-form-item-label">创建日期</label>
+<!--            <label class="el-form-item-label">创建日期</label>-->
             <date-range-picker
               v-model="query.createTime"
               start-placeholder="createTimeStart"
@@ -63,7 +63,7 @@
             />
           </div>
           <div class="search-item">
-            <label class="el-form-item-label">审核时间</label>
+<!--            <label class="el-form-item-label">审核时间</label>-->
             <date-range-picker
               v-model="query.checkerTime"
               start-placeholder="checkerTimeStart"
@@ -247,7 +247,7 @@ import DateRangePicker from '@/components/DateRangePicker'
 const defaultForm = { courseId: null, courseName: null, createTime: null, checkerTime: null, owner: null, checker: null, cover: null, introduction: null, deadlineTime: null, money: null, preMoney: null, commission: null, courseForm: null, sourceUrl: null, accoutNumber: null, contactWay: null, payWay: null, enabled: null, courseSort: null, checkStatus: null }
 export default {
   name: 'Course',
-  components: {DateRangePicker, pagination, crudOperation, rrOperation, udOperation },
+  components: { DateRangePicker, pagination, crudOperation, rrOperation, udOperation },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   dicts: ['course_form', 'pay_way', 'course_status', 'check_status'],
   cruds() {
